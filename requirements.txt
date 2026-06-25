@@ -1,0 +1,14 @@
+# Core numerical primitives
+numpy
+scipy
+pandas
+
+# Plotting
+matplotlib
+seaborn
+
+# Dataset loading/preprocessing and validation oracle
+scikit-learn
+
+# Config file parsing for experiments/configs/*.yaml
+pyyaml
