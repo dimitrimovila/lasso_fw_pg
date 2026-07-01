@@ -17,8 +17,20 @@ def frank_wolfe(A, b, tau, x0=None, step_size="diminishing",
 
     min_{x in R^n}  ||Ax - b||_2^2   s.t.   ||x||_1 <= tau
 
-    Algorithm instantiated with the LASSO LMO, FW direction, and convex-combination 
-    update.
+    LMO, objective, and gradient come from src/lasso_problem.py (not reimplemented).
+
+    Core update rule
+    ----------------
+    1. Frank-Wolfe Atom (LMO):
+       s_k := argmin_{s in C} <grad f(x_k), s>
+    2. Frank-Wolfe Direction:
+       d_k := s_k - x_k
+    3. Primal Update (Convex Combination):
+       Choose step size alpha_k in [0, 1].
+       x_{k+1} := x_k + alpha_k * d_k
+    4. Stopping Criterion:
+       Evaluate the FW gap: g_k := <grad f(x_k), x_k - s_k>.
+       Terminate if g_k <= epsilon (guaranteeing x_k is epsilon-optimal for convex f).
 
     Parameters
     ----------
