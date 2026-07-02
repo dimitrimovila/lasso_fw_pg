@@ -3,8 +3,7 @@ Projected Gradient (PG) for the L1-constrained LASSO / BPDN problem.
 
     min_{x in R^n}  ||Ax - b||_2^2   s.t.   ||x||_1 <= tau
 
-The constant step s = 1/L is used inside the projection and 
-the relaxation parameter is fixed to alpha_k = 1/L for every iteration.
+The constant step s = 1/L is used inside the projection while alpha = 1.
 
 The projection rho_C = project_l1 and the Lipschitz constant L = compute_L(A)
 are imported from src/lasso_problem.py and reused.  
@@ -21,31 +20,29 @@ from stopping_criteria import gradient_mapping
 
 def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None):
     """
-    Projected Gradient for L1-constrained LASSO (s = alpha_k = 1/L).
+    Projected Gradient for L1-constrained LASSO.
 
     Core update rule
     ----------------
     1. Gradient Step & Projection (Target Point):
        Take an unconstrained gradient step with step size s = 1/L, and project 
        the result back onto the feasible set C:
-       x_hat_k := rho_C( x_k - (1/L) * grad f(x_k) )
+        x_hat_k := rho_C( x_k - (1/L) * grad f(x_k) )
        
     2. Gradient Mapping:
        Define the gradient mapping as the residual between the current iterate 
        and the newly projected target point:
-       g_C(x_k) := x_k - x_hat_k
+        g_C(x_k) := x_k - x_hat_k
        
     3. Primal Update:
-       Update the primal variable by taking a step of size alpha_k = 1/L in the 
-       direction of the projected target:
-       x_{k+1} := x_k + (1/L) * (x_hat_k - x_k)
-               := x_k - (1/L) * g_C(x_k)
+       Take a full step to the projected target point (alpha = 1):
+        x_{k+1} := x_hat_k
        
     4. Stopping Criterion:
        A point x* is optimal if and only if it is a fixed point of the projection 
        operator: x* = rho_C(x* - s * grad f(x*)) <=> g_C(x*) = 0. 
        Terminate if the norm of the gradient mapping satisfies:
-       ||g_C(x_k)|| <= epsilon.
+        ||g_C(x_k)|| <= epsilon.
 
     Parameters
     ----------
@@ -100,10 +97,10 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
     for k in range(max_iter):
         t0 = time.perf_counter()
 
-        g = grad_f(x, A, b)
+        grad = grad_f(x, A, b)
 
         # Gradient mapping: 
-        x_hat, g_C = gradient_mapping(x, g, tau, L)
+        x_hat, g_C = gradient_mapping(x, grad, tau, L)
         gmap_norm = float(np.linalg.norm(g_C))
 
         # Quantities recorded at the current iterate x_k
@@ -113,7 +110,7 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
 
         stop = gmap_norm <= epsilon
         if not stop:
-            x = x - g_C / L
+            x = x_hat 
 
         dt = time.perf_counter() - t0
 
@@ -137,5 +134,5 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
         "L": L,
         "n_iter": len(f_history),
         "converged": converged,
-        "step_size": "fixed_1/L",
+        "step_size": "fixed_1/L for s and alpha = 1",
     }
