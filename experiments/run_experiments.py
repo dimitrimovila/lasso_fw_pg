@@ -25,13 +25,13 @@ from algorithms.projected_gradient import projected_gradient
 
 # Experimental settings: 
 EPSILON = 1e-4
-MAX_ITER = 2000
+MAX_ITER = 3000
 STEP_SIZE_FW = "exact"
 
 TAU = {
-    "diabetes": 1.5,
-    "riboflavin": 1.0,    
-    "communities": 3.0,   
+    "diabetes": 1.5,    # below ||x_ols||_1 (~2.35); binds, stays dense
+    "riboflavin": 1.0,  # before the accuracy/sparsity knee (tau_sweep.py)  
+    "communities": 2.5, # tight enough to bind and loose enough to converge  
 }
 
 DATASETS = ["diabetes", "riboflavin", "communities"]
