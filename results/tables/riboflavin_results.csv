@@ -1,0 +1,4 @@
+algorithm,final_f,iters_to_convergence,wall_clock_total_s,final_support_size,converged
+FW,13.190522347115541,3000,1.7861891012871638,19,did not converge
+PFW,13.178824236438535,330,0.25948189792688936,16,yes
+PG,15.423864498614837,3000,2.9972359044477344,42,did not converge
