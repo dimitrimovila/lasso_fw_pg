@@ -139,11 +139,11 @@ def project_l1(x, tau):
 
     Algorithm: sort-based reduction to simplex projection.
   
-    # The algorithm implemented here is the standard O(n log n) sort-based threshold
-    # method (descending sort + cumulative-sum threshold search), which is the
-    # classical precursor cited alongside Condat.  Condat's strict O(n) variant
-    # uses a pivot-selection step instead of a full sort; that refinement is not
-    # needed for correctness, only for asymptotic speed at very large n.
+    # The algorithm implemented here is the standard O(n log n) sort-based threshold method 
+    # (descending sort + cumulative-sum threshold search) of Duchi et al. (2008) 
+    # "Efficient Projections onto the L1-Ball for Learning in High Dimensions". 
+    # The sort-based method is used deliberately, instead of Condat's O(n),
+    # since a pure-Python loop's per-element cost outweighs numpy's vectorized sort.
 
     Parameters
     ----------
