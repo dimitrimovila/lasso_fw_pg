@@ -15,16 +15,18 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from datasets import load_dataset
+from lasso_problem import f as objective
 from algorithms.pairwise_fw import pairwise_fw
 
 DATASET = "riboflavin"
 TAUS = [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
 CURRENT_TAU = 1.0 
 EPSILON = 1e-4
-MAX_ITER = 10000
+MAX_ITER = 3000
 
 data = load_dataset(DATASET)
 A, b = data["A_train"], data["b_train"]
+A_test, b_test = data["A_test"], data["b_test"]
 p = A.shape[1]
 
 rows = []
@@ -32,28 +34,33 @@ for tau in TAUS:
     x0 = np.zeros(p)
     x0[0] = tau
     res = pairwise_fw(A, b, tau, x0=x0, epsilon=EPSILON, max_iter=MAX_ITER)
+    test_f = objective(res["x"], A_test, b_test)
     rows.append({
         "tau": tau,
         "final_f": res["f_history"][-1],
+        "test_f": test_f,
         "support": res["active_set_size_history"][-1],
         "n_iter": res["n_iter"],
         "converged": res["converged"],
     })
     print(f"tau={tau:>6}: final_f={res['f_history'][-1]:.4f}  "
+          f"test_f={test_f:.4f}  "
           f"support={res['active_set_size_history'][-1]:>4}  "
           f"iters={res['n_iter']:>5}  converged={res['converged']}")
 
 taus = [r["tau"] for r in rows]
 fvals = [r["final_f"] for r in rows]
+test_fvals = [r["test_f"] for r in rows]
 supports = [r["support"] for r in rows]
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
 
-ax1.plot(taus, fvals, "o-", color="tab:blue")
+ax1.plot(taus, fvals, "o-", color="tab:blue", label="train")
+ax1.plot(taus, test_fvals, "o--", color="tab:red", label="test")
 ax1.axvline(CURRENT_TAU, color="gray", linestyle=":", label=f"current tau={CURRENT_TAU}")
 ax1.set_xscale("log")
 ax1.set_xlabel("tau")
-ax1.set_ylabel("final f(x)")
+ax1.set_ylabel("f(x)")
 ax1.set_title(f"{DATASET}: objective vs tau (PFW)")
 ax1.legend()
 
