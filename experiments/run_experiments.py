@@ -137,11 +137,3 @@ for name in DATASETS:
         writer = csv.DictWriter(f, fieldnames=rows[0].keys())
         writer.writeheader()
         writer.writerows(rows)
-
-print("\n" + "=" * 50)
-if not_converged:
-    print("Did not converge within max_iter:")
-    for ds, algo in not_converged:
-        print(f"  - {algo} on {ds}")
-else:
-    print("All (algorithm, dataset) pairs converged.")
