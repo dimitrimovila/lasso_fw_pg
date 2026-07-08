@@ -73,10 +73,6 @@ def compute_L(A):
     "f differentiable with L-Lipschitz gradient: ||∇f(x) - ∇f(y)|| ≤ L||x-y||" 
     L is the spectral norm of H.
 
-    Used by:
-    - PG fixed step-size s = 1/L 
-    - Lipschitz-dependent FW step-size 
-
     Parameters
     ----------
     A : ndarray, shape (m, n)
@@ -104,13 +100,7 @@ def lmo(grad, tau):
 
     This yields an extreme point (vertex) of the scaled L1-ball.
 
-    LMO = sign(-∇_{i_k} f) * tau * e_{i_k},  i_k in argmax_i |∇_i f|
-    closed-form LMO for the L1-ball: argmin_{||x||_1 ≤ 1} <x,y> = -sign([y]_{i_max}) * e_{i_max}
-    Cost: O(n), single argmax over n coordinates, fully vectorized 
-
-    Edge case: if grad is identically zero (already at the unconstrained minimum),
-    np.sign(0) = 0 so the returned point is the origin (interior of C).  In that
-    situation the FW gap is also zero and the algorithm would have already stopped.
+    Cost: O(n), single argmax over n coordinates in the gradient vector.
 
     Parameters
     ----------
@@ -124,7 +114,7 @@ def lmo(grad, tau):
     s : ndarray, shape (n,)
         LMO solution: an extreme point of the scaled L1-ball.
     """
-    # i* = argmax_i |grad_i|   (O(n) argmax, no coordinate loop)
+    # i* = argmax_i |grad_i|
     i_star = np.argmax(np.abs(grad))
 
     # s* = -sign(grad[i*]) * tau * e_{i*}
