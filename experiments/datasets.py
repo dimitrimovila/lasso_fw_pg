@@ -43,7 +43,7 @@ def _load_riboflavin():
     Genomics p >> n instance (n=71, p=4088).  Target = log riboflavin production rate; 
     all 4088 gene-expression features are numeric with no missing values.
     """
-    bunch = fetch_openml("riboflavin", version=1, as_frame=False)
+    bunch = fetch_openml("riboflavin", version=1, as_frame=False, parser="auto")
     A = np.asarray(bunch.data, dtype=float)
     b = np.asarray(bunch.target, dtype=float)
     return A, b
@@ -58,7 +58,7 @@ def _load_communities():
       - drop any numeric column containing at least one missing value.
     The actual cleaned (n, p) is printed so it can be logged.
     """
-    bunch = fetch_openml("us_crime", version=1, as_frame=True)
+    bunch = fetch_openml("us_crime", version=1, as_frame=True, parser="auto")
     X = bunch.data.copy()          # features as a DataFrame
     y = bunch.target               # ViolentCrimesPerPop (Series)
 
