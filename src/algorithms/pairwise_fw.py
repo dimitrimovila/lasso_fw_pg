@@ -30,9 +30,7 @@ from line_search import exact_line_search
 from stopping_criteria import fw_gap
 
 
-# Atoms below drop_tol weight are removed from the active set (handles the
-# exact-arithmetic "alpha_{v_k} -> 0" of a swap/drop step under floating point 
-# conditions).
+# Atoms below drop_tol weight are removed from the active set.
 _DROP_TOL = 1e-12
 
 
@@ -125,7 +123,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
     """
     n = A.shape[1]  # number of features
 
-    # --- Initial active set S^(0) = {x_0}, alpha_{x_0} = 1 (vertex start). ---
+    # Initial active set S^(0) = {x_0}, alpha_{x_0} = 1 (vertex start).
     if x0 is None:
         s0_vec = lmo(grad_f(np.zeros(n), A, b), tau)
         start_key = _lmo_key(s0_vec)
@@ -154,12 +152,12 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
         t0 = time.perf_counter()
 
         # First-order info and FW atom (LMO over the whole L1-ball).
-        g = grad_f(x, A, b)
-        s_vec = lmo(g, tau)
+        grad = grad_f(x, A, b)
+        s_vec = lmo(grad, tau)
         s_key = _lmo_key(s_vec)
 
         # FW gap (native stopping criterion, reuses s_vec with no extra LMO call).
-        gap = fw_gap(g, x, tau, s=s_vec)
+        gap = fw_gap(grad, x, tau, s=s_vec)
 
         # Quantities recorded at the current iterate x_k.
         fval = f(x, A, b)
@@ -170,7 +168,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
         if not stop:
             # Away atom v_k = argmax over the active set of <grad, v>.
             # For atom (i, sign):  <grad, sign*tau*e_i> = grad[i] * sign * tau.
-            v_key = max(weights, key=lambda key: g[key[0]] * key[1] * tau)
+            v_key = max(weights, key=lambda key: grad[key[0]] * key[1] * tau)
             v_vec = _atom_vector(v_key, tau, n)
 
             # Pairwise direction and step interval.
@@ -180,7 +178,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
             # Exact line search on the same LASSO quadratic, clipped to [0, gamma_max].
             gamma = exact_line_search(x, d, A, b, alpha_max=gamma_max)
 
-            # --- Pairwise weight update: move gamma mass from v_k to s_k ---
+            # Pairwise weight update: move gamma mass from v_k to s_k
             weights[v_key] -= gamma
             if weights[v_key] <= _DROP_TOL:        # swap/drop: v_k emptied
                 del weights[v_key]
