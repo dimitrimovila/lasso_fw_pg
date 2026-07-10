@@ -1,5 +1,5 @@
 """
-Projected Gradient (PG) for the L1-constrained LASSO / BPDN problem.
+Projected Gradient (PG) for the L1-constrained LASSO problem.
 
     min_{x in R^n}  ||Ax - b||_2^2   s.t.   ||x||_1 <= tau
 

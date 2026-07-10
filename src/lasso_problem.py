@@ -132,7 +132,7 @@ def project_l1(x, tau):
     # The algorithm implemented here is the standard O(n log n) sort-based threshold method 
     # (descending sort + cumulative-sum threshold search) of Duchi et al. (2008) 
     # "Efficient Projections onto the L1-Ball for Learning in High Dimensions". 
-    # The sort-based method is used deliberately, instead of Condat's O(n),
+    # The sort-based method is used deliberately, instead of Condat's O(n) method,
     # since a pure-Python loop's per-element cost outweighs numpy's vectorized sort.
 
     Parameters
