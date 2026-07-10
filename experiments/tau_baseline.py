@@ -1,4 +1,9 @@
-"""Per-dataset ||x_ols||_1 and conditioning, to check the tau choices."""
+"""Per-dataset ||x_ols||_1 and conditioning, to check the tau choices.
+
+Also computes the condition number, sigma max, sigma min, and kappa (ratio
+between the sigma max and min) to tell us how well conditioned our problems
+are across all datasets.
+"""
 
 import os
 import sys

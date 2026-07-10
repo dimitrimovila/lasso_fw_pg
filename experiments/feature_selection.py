@@ -7,6 +7,9 @@ Since all three solve the same convex LASSO problem, the final supports
 should agree (or nearly).
 
 Support is defined equally for all three: |x_i| > SUPPORT_TOL on the final x.
+
+Outputs figure on the top features selected by each algorithm as a figure .png
+file with name dataset_feature_selection.png in the \results\figures folder. 
 """
 
 import os

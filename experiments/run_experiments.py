@@ -3,6 +3,11 @@ Run FW, PFW, PG on the three datasets and save the convergence plots + result ta
 
 Same setup for all three algorithms on a given dataset: same x0 (tau * e_1, a
 vertex of the l1-ball), same tau, epsilon, max_iter.
+
+Prints results to \results\figures folder as dataset_name.png including (1) objective 
+v iterations, (2) stopping criterion (FW gap and gradient mapping norm) v iterations and 
+(3) sparsity of support v iterations. The script also prints results in .csv files and
+saves them in \results\tables folder as dataset_name.csv.
 """
 
 import os
@@ -87,10 +92,10 @@ for name in DATASETS:
 
     # PG has no active set; classic FW doesn't track one either, 
     # ||x_k||_0 is used as its proxy (PFW's |S^(t)| is the real value)
-    for algo in ["FW", "PFW"]:
+    for algo in ["FW", "PFW", "PG"]:
         hist_key = "active_set_size_history" if algo == "PFW" else "support_history"
         ax3.plot(results[algo][hist_key], color=COLORS[algo], linestyle=STYLES[algo], label=algo)
-    ax3.set_title("Active-set size |S| (FW: ||x_k||_0)")
+    ax3.set_title("Support size FW/PG: ||x_k||_0, PWF: Active-set size |S|")
     ax3.set_xlabel("iteration")
     ax3.legend()
 

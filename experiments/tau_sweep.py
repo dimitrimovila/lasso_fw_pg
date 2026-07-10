@@ -2,6 +2,8 @@
 Sweep tau over a range of values for one dataset, using PFW only (cheapest and
 most reliable of the three per run_experiments.py's own results), to see the
 accuracy/sparsity trade-off curve and where the currently chosen tau sits on it.
+
+Outputs the figures from tau sweep as dataset_tau_sweep.png in \results\figures folder.
 """
 
 import os

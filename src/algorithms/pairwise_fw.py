@@ -175,7 +175,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
             d = s_vec - v_vec
             gamma_max = weights[v_key]            # gamma_max := alpha_{v_k}
 
-            # Exact line search on the same LASSO quadratic, clipped to [0, gamma_max].
+            # Exact line search on the same LASSO quadratic, constrained to [0, gamma_max].
             gamma = exact_line_search(x, d, A, b, alpha_max=gamma_max)
 
             # Pairwise weight update: move gamma mass from v_k to s_k
