@@ -88,11 +88,11 @@ def frank_wolfe(A, b, tau, x0=None, step_size="diminishing",
         t0 = time.perf_counter()
 
         # First-order information and the LMO vertex
-        g = grad_f(x, A, b)
-        s = lmo(g, tau)
+        grad = grad_f(x, A, b)
+        s = lmo(grad, tau)
 
         # FW gap (stopping criterion)
-        gap = fw_gap(g, x, tau, s=s)
+        gap = fw_gap(grad, x, tau, s=s)
 
         # Quantities recorded at the current iterate x_k.
         fval = f(x, A, b)

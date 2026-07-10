@@ -114,10 +114,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
           - "f_history"              : list[float], f(x_k).
           - "gap_history"            : list[float], FW gap g_k^FW = <grad f(x_k), x_k - s_k>.
           - "active_set_size_history": list[int], |S^(k)|.
-          - "support_history"        : list[int], ||x_k||_0  (for parity with FW).
           - "time_history"           : list[float], wall-clock seconds for iteration k.
-          - "weight_sum_history"     : list[float], sum_v alpha_v  (should be 1).
-          - "min_weight_history"     : list[float], min_v alpha_v  (should be >= 0).
           - "active_set"             : dict, final {(i, sign): alpha_v}.
           - "n_iter", "converged", "step_size".
     """
@@ -142,10 +139,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
     f_history = []
     gap_history = []
     active_set_size_history = []
-    support_history = []
     time_history = []
-    weight_sum_history = []
-    min_weight_history = []
     converged = False
 
     for k in range(max_iter):
@@ -162,7 +156,6 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
         # Quantities recorded at the current iterate x_k.
         fval = f(x, A, b)
         size = len(weights)
-        nnz = int(np.count_nonzero(x))
 
         stop = gap <= epsilon
         if not stop:
@@ -192,19 +185,13 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
             w_min = float(min(weights.values()))
             assert np.isclose(w_sum, 1.0, atol=1e-9), f"weights sum {w_sum} != 1"
             assert w_min >= -1e-12, f"negative weight {w_min}"
-        else:
-            w_sum = float(sum(weights.values()))
-            w_min = float(min(weights.values()))
 
         dt = time.perf_counter() - t0
 
         f_history.append(fval)
         gap_history.append(gap)
         active_set_size_history.append(size)
-        support_history.append(nnz)
         time_history.append(dt)
-        weight_sum_history.append(w_sum)
-        min_weight_history.append(w_min)
 
         if stop:
             converged = True
@@ -215,10 +202,7 @@ def pairwise_fw(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000):
         "f_history": f_history,
         "gap_history": gap_history,
         "active_set_size_history": active_set_size_history,
-        "support_history": support_history,
         "time_history": time_history,
-        "weight_sum_history": weight_sum_history,
-        "min_weight_history": min_weight_history,
         "active_set": dict(weights),
         "n_iter": len(f_history),
         "converged": converged,

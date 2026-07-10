@@ -69,7 +69,6 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
           - "x"               : ndarray, final iterate.
           - "f_history"       : list[float], f(x_k).
           - "gmap_norm_history": list[float], ||g_C(x_k)||.
-          - "f_xhat_history"  : list[float], f(x_hat_k), the full projected point.
           - "support_history" : list[int], ||x_k||_0 (sparsity tracking; PG has no
                                 active set, so no |S^(t)| is reported).
           - "time_history"    : list[float], wall-clock seconds for iteration k.
@@ -81,7 +80,7 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
         L = compute_L(A) 
 
     if x0 is None:
-        x = np.zeros(n, dtype=float)  # feasible since ||0||_1 = 0 <= tau
+        x = np.zeros(n, dtype=float) 
     else:
         x = np.array(x0, dtype=float)
         if np.sum(np.abs(x)) > tau + 1e-12:
@@ -89,7 +88,6 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
 
     f_history = []
     gmap_norm_history = []
-    f_xhat_history = []
     support_history = []
     time_history = []
     converged = False
@@ -105,7 +103,6 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
 
         # Quantities recorded at the current iterate x_k
         fval = f(x, A, b)
-        f_xhat = f(x_hat, A, b)  # for the descent-property check
         nnz = int(np.count_nonzero(x))
 
         stop = gmap_norm <= epsilon
@@ -116,7 +113,6 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
 
         f_history.append(fval)
         gmap_norm_history.append(gmap_norm)
-        f_xhat_history.append(f_xhat)
         support_history.append(nnz)
         time_history.append(dt)
 
@@ -128,7 +124,6 @@ def projected_gradient(A, b, tau, x0=None, epsilon=1e-6, max_iter=10_000, L=None
         "x": x,
         "f_history": f_history,
         "gmap_norm_history": gmap_norm_history,
-        "f_xhat_history": f_xhat_history,
         "support_history": support_history,
         "time_history": time_history,
         "L": L,
